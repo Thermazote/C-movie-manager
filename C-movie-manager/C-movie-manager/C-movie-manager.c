@@ -22,11 +22,12 @@ typedef struct {
 
 typedef enum _ACTION {
     EXIT = 1,
-    DISPLAY
+    DISPLAY_FILMS,
+    DISPLAY_CINEMA,
 } ACTION;
 
-void displayCinema(cinema* cinemaList, const char* cinemaName, int cinemaCount, int moviesCount);
-
+void displayFilmsInCinema(cinema* cinemaList, const char* cinemaName, int cinemaCount, int moviesCount);
+void displayCinema(cinema* cinemaList, int cinemaCount);
 
 int main()
 {
@@ -70,29 +71,33 @@ int main()
     ACTION act;
     do
     {
-        printf("Enter action:\n1. Exit\n2. Display films from cinema\n\nYour choice: ");
+        putchar('\n');
+        printf("Enter action:\n1. Exit\n2. Display films from cinema\n3. Display all cinema\nYour choice: ");
         scanf_s("%d", &act);
+        putchar('\n');
 
         switch (act)
         {
         case EXIT:
             return SUCCESS;
-        case DISPLAY:
+        case DISPLAY_FILMS:
             printf("Enter cinema name: ");
             char cinemaName[20];
             scanf_s("%s", cinemaName, 20);
-            displayCinema(cinemaList, cinemaName, C, M);
+            displayFilmsInCinema(cinemaList, cinemaName, C, M);
+            break;
+        case DISPLAY_CINEMA:
+            displayCinema(cinemaList, C);
             break;
         default:
             printf("Wrong action number\n");
             break;
         }
-
     } while (true);
 }
 
 
-void displayCinema(cinema* cinemaList, const char* cinemaName, int cinemaCount, int moviesCount)
+void displayFilmsInCinema(cinema* cinemaList, const char* cinemaName, int cinemaCount, int moviesCount)
 {
     bool exists = false; 
     for (int i = 0; i < cinemaCount; i++) {
@@ -109,6 +114,12 @@ void displayCinema(cinema* cinemaList, const char* cinemaName, int cinemaCount, 
     if (!exists) {
         printf("Cinema with name \"%s\" is not found in the collection\n", cinemaName);
     }
+}
 
-    putchar('\n');
+void displayCinema(cinema* cinemaList, int cinemaCount)
+{
+    printf("All cinema: \n");
+    for (int i = 0; i < cinemaCount; i++) {
+        printf("%d. %s\n", i + 1, cinemaList[i].cinemaName);
+    }
 }
