@@ -2,11 +2,11 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdbool.h>
+#include <math.h>
 
 #define SUCCESS 0
 #define FILE_ERROR 1
 #define MATCH_CONTENT_ERROR 2
-
 
 typedef struct {
     char name[20];
@@ -24,10 +24,12 @@ typedef enum _ACTION {
     EXIT = 1,
     DISPLAY_FILMS,
     DISPLAY_CINEMA,
+    FIND_MOVIE,
 } ACTION;
 
 void displayFilmsInCinema(cinema* cinemaList, const char* cinemaName, int cinemaCount, int moviesCount);
 void displayCinema(cinema* cinemaList, int cinemaCount);
+void findClosestDateMovie(cinema* cinemaList, const char * movieName, int targetDate, int cinemaCount, int moviesCount);
 
 int main()
 {
@@ -69,10 +71,13 @@ int main()
 
     
     ACTION act;
+    char cinemaName[20];
+    char movieName[20];
+    int date;
     do
     {
         putchar('\n');
-        printf("Enter action:\n1. Exit\n2. Display films from cinema\n3. Display all cinema\nYour choice: ");
+        printf("Enter action:\n1. Exit\n2. Display films from cinema\n3. Display all cinema\n4. Find film by name closest to date\nYour choice: ");
         scanf_s("%d", &act);
         putchar('\n');
 
@@ -82,12 +87,18 @@ int main()
             return SUCCESS;
         case DISPLAY_FILMS:
             printf("Enter cinema name: ");
-            char cinemaName[20];
             scanf_s("%s", cinemaName, 20);
             displayFilmsInCinema(cinemaList, cinemaName, C, M);
             break;
         case DISPLAY_CINEMA:
             displayCinema(cinemaList, C);
+            break;
+        case FIND_MOVIE:
+            printf("Enter movie name: ");
+            scanf_s("%s", movieName, 20);
+            printf("Enter target date (0 - 100): ");
+            scanf_s("%d", &date);
+            findClosestDateMovie(cinemaList, movieName, date, C, M);
             break;
         default:
             printf("Wrong action number\n");
@@ -99,21 +110,17 @@ int main()
 
 void displayFilmsInCinema(cinema* cinemaList, const char* cinemaName, int cinemaCount, int moviesCount)
 {
-    bool exists = false; 
     for (int i = 0; i < cinemaCount; i++) {
         if (strcmp(cinemaList[i].cinemaName, cinemaName) == 0) {
             printf("Films in %s:\n", cinemaName);
             for (int j = 0; j < moviesCount; j++) {
                 printf("%d. \"%s\"\n", j + 1, cinemaList[i].moviesList[j].name);
             }
-            exists = true;
-            break;
+            return;
         }
     }
     
-    if (!exists) {
-        printf("Cinema with name \"%s\" is not found in the collection\n", cinemaName);
-    }
+    printf("Cinema with name \"%s\" is not found in the collection\n", cinemaName);
 }
 
 void displayCinema(cinema* cinemaList, int cinemaCount)
@@ -121,5 +128,33 @@ void displayCinema(cinema* cinemaList, int cinemaCount)
     printf("All cinema: \n");
     for (int i = 0; i < cinemaCount; i++) {
         printf("%d. %s\n", i + 1, cinemaList[i].cinemaName);
+    }
+}
+
+void findClosestDateMovie(cinema* cinemaList, const char* movieName, int targetDate, int cinemaCount, int moviesCount)
+{
+    int cinemaNumber;
+    int closestDistance = 100;
+    bool movieExists = false;
+
+    for (int i = 0; i < cinemaCount; i++) {
+        for (int j = 0; j < moviesCount; j++) {
+            if (strcmp(cinemaList[i].moviesList[j].name, movieName) == 0) {
+                int distance = abs(cinemaList[i].moviesList[j].date - targetDate);
+                if (distance < closestDistance) {
+                    closestDistance = distance;
+                    cinemaNumber = i;
+
+                    if (!movieExists) movieExists = true;
+                }
+            }
+        }
+    }
+
+    if (!movieExists) {
+        printf("Movie with name \"%s\" is not found in any cinema\n", movieName);
+    }
+    else {
+        printf("Closest \"%s\" to date \"%d\" is in \"%s\"\n", movieName, targetDate, cinemaList[cinemaNumber].cinemaName);
     }
 }
