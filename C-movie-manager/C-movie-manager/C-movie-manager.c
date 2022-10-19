@@ -1,23 +1,31 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <stdbool.h>
 
 #define SUCCESS 0
 #define FILE_ERROR 1
 #define MATCH_CONTENT_ERROR 2
 
 
-typedef struct _movie {
+typedef struct {
     char name[20];
     int date;
     float price;
     float discount;
 } movie;
 
-typedef struct _cinema {
+typedef struct {
     char cinemaName[20];
     movie moviesList[5];
 } cinema;
+
+typedef enum _ACTION {
+    EXIT = 1,
+    DISPLAY
+} ACTION;
+
+void displayCinema(cinema* cinemaList, const char* cinemaName, int cinemaCount, int moviesCount);
 
 
 int main()
@@ -58,5 +66,49 @@ int main()
         cinemaNumber++;
     }
 
-    return SUCCESS;
+    
+    ACTION act;
+    do
+    {
+        printf("Enter action:\n1. Exit\n2. Display films from cinema\n\nYour choice: ");
+        scanf_s("%d", &act);
+
+        switch (act)
+        {
+        case EXIT:
+            return SUCCESS;
+        case DISPLAY:
+            printf("Enter cinema name: ");
+            char cinemaName[20];
+            scanf_s("%s", cinemaName, 20);
+            displayCinema(cinemaList, cinemaName, C, M);
+            break;
+        default:
+            printf("Wrong action number\n");
+            break;
+        }
+
+    } while (true);
+}
+
+
+void displayCinema(cinema* cinemaList, const char* cinemaName, int cinemaCount, int moviesCount)
+{
+    bool exists = false; 
+    for (int i = 0; i < cinemaCount; i++) {
+        if (strcmp(cinemaList[i].cinemaName, cinemaName) == 0) {
+            printf("Films in %s:\n", cinemaName);
+            for (int j = 0; j < moviesCount; j++) {
+                printf("%d. \"%s\"\n", j + 1, cinemaList[i].moviesList[j].name);
+            }
+            exists = true;
+            break;
+        }
+    }
+    
+    if (!exists) {
+        printf("Cinema with name \"%s\" is not found in the collection\n", cinemaName);
+    }
+
+    putchar('\n');
 }
