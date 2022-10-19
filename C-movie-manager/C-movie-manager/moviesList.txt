@@ -1,0 +1,8 @@
+Cinema1
+Harry_Potter	90	1000	20
+Terminator		80	900		10
+Rings_of_Power	95	1300	5
+Cinema2
+Harry_Potter	95	1000	15
+Terminator		90	900		20
+Rings_of_Power	78	1300	10
