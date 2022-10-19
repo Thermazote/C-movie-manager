@@ -58,6 +58,5 @@ int main()
         cinemaNumber++;
     }
 
-    printf("Cinema name: %s\nFirst movie name: %s\b", cinemaList[0].cinemaName, cinemaList[0].moviesList[0].name);
     return SUCCESS;
 }
